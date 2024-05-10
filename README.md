@@ -1,9 +1,14 @@
-
+#Laravel Application with multiple services
 > Docker Containers for Laravel nine
+
 laravel with docker image                  
+
 mysql:8.0
+
 nginx:alpine
+
 redis:alpine
+
 phpmyadmin
 
 ``` bash
@@ -26,5 +31,7 @@ docker-compose build
 docker-compose up -d
 docker-compose ps
 ```
-##Finally browse the application
-#http://localhost:8088/
+
+Then access from browser
+
+[http://localhost:8088]
