@@ -1,0 +1,76 @@
+version: "3.7"
+services:
+  app:
+    build:
+      #args:
+      #  user: www-data
+      #  uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: laravel9-image
+    container_name: laravel-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - laravel9
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+    environment:
+      #MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: admin123
+      #MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: admin
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - mysql:/var/lib/mysql/
+    networks:
+      - laravel9
+
+  nginx:
+    image: nginx:alpine
+    container_name: app-nginx
+    restart: unless-stopped
+    ports:
+      - 8088:80
+    volumes:
+      - ./:/var/www
+      - ./nginx:/etc/nginx/conf.d/
+    networks:
+      - laravel9
+
+  redis:
+    image: "redis:alpine"
+    container_name: app-redis
+    ports:
+     - "8087:6379"
+    volumes:
+      - ./:/var/www
+    networks:
+      - laravel9
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: admin-php
+    restart: always
+    ports:
+      - 9999:80
+    depends_on:
+      - db  
+    environment:
+      PMA_HOST: mysql-db
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 3000M
+    networks:
+      - laravel9
+
+networks:
+  laravel9:
+    driver: bridge
+volumes:
+  mysql: {}
+  nginx: {}
